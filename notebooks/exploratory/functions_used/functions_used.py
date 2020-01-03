@@ -5,6 +5,21 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 
 def model_preprocessing(df, feature_list, ohe, train=True):
+    """ 
+    Begin the process of cleaning the data:
+    
+    The first code-block assigns the variable "df" to a newly cleaned DataFrame.
+    
+    The second code-block isolates and drops the target variable column.
+    
+    The third code-block creates a list of indepdent features.
+    
+    The fourth code-block One-Hot-Encodes the categorical features and trains the model.
+    
+    The fifth code-block returns a featural Frame and a target Frame.
+   
+    """
+    
     print('Beginning numerical cleaning...')
     df = numerical_clean(df, feature_list)
     print('Completed numerical cleaning.\n')
@@ -33,7 +48,8 @@ def model_preprocessing(df, feature_list, ohe, train=True):
 
 
 def numerical_clean(df, feature_list):
-    #this takes the df and the list of numerical features to clean
+    """Prepare a DataFrame via the drop_zero_long and con_year_avg functions."""
+    
     df = df[feature_list]
     print("check: df shape = ", df.shape)
     print('---Dropping 0 longitudes...')
@@ -46,9 +62,17 @@ def numerical_clean(df, feature_list):
     return df
 
 def drop_zero_long(df):
+    """"Drop records where longitude equals zero."""
+    
     return df.drop(df[df.longitude==0].index)
 
 def con_year_avg(df):
+    """
+    Impute the average construction year for a given extraction type for instances where the
+    construction year is not available.
+    
+    """
+    
     con_year_nonzero = df.replace(0, np.nan)
     avg_con_years = pd.DataFrame(con_year_nonzero.groupby(['extraction_type']).mean()['construction_year'])
     df = df.join(avg_con_years, rsuffix = '_avg', on = 'extraction_type')
@@ -59,16 +83,23 @@ def con_year_avg(df):
     return df
 
 def obj_lister(df):
-    # returns a list of columns that contain Objects
+    """Return a list of columns that contain Objects"""
+    
     obj_list = []
     for col in df.select_dtypes([np.object]):
         obj_list.append(col)
     return obj_list
 
 def obj_preprocessing(df, obj_list, ohe, train = True):
-    '''
+    """
+    Create a copied DataFrame named "df_current" using features returned by the function object_lister.
     
-    '''
+    Clean this DataFame of NaN entries.
+    
+    One-hot-encode the resultant DataFrame.
+    
+    """
+    
     df_current = df[obj_list]
     # Clean the df if there are NaNs
     df = NaN_cleaning(df_current)
@@ -79,14 +110,16 @@ def obj_preprocessing(df, obj_list, ohe, train = True):
 
 
 def NaN_cleaning(df):
-    # Replace NaN with "unknown" bin
-    print('---Replacing NaN with "unknown" bin...')
+    """Replace NaN values with an 'unknown' flag."""
+    
+    print('---Replacing NaN with "unknown" flag...')
     df = df.replace(np.nan, 'unknown')
     print(f'---Check: Number of rows with nulls: {len(df[df.isna().any(axis=1)])}...\n')
     return df.reset_index(drop=True)
 
 def ohe_data(df, ohe, train):
-    #OHE the data
+    """One-Hot-Encode the data"""
+    
     print('Begin one hot encoding data...')
     if train:
         array_current = ohe.fit_transform(df).toarray()
@@ -95,10 +128,13 @@ def ohe_data(df, ohe, train):
     print('Finish one hot encoding data...\n')
     return array_current
 
-
-# Function to calculate accuracy 
-# from: https://www.geeksforgeeks.org/decision-tree-implementation-python/
 def calc_accuracy(y_test, y_pred): 
+    """
+    Display a confusion matrix, print an accuracy score, and build and print a text report of the main       classification metrics.
+    
+    This code is provided by: https://www.geeksforgeeks.org/decision-tree-implementation-python/
+    
+    """
       
     print("Confusion Matrix: ", 
     confusion_matrix(y_test, y_pred)) 
@@ -108,4 +144,3 @@ def calc_accuracy(y_test, y_pred):
       
     print("Report : ", 
     classification_report(y_test, y_pred)) 
-  
