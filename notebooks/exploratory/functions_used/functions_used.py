@@ -54,9 +54,8 @@ def con_year_avg(df):
     df = df.join(avg_con_years, rsuffix = '_avg', on = 'extraction_type')
     df = df.reset_index()
     df = df.drop(['index'], axis = 1)
-    df['construction_year'] = df.apply(con_year, axis=1)
+    # df['construction_year'] = df.apply(con_year, axis=1)
     df = df.drop(['construction_year_avg'], axis = 1)
-    print('------number of zeros = ', df['construction_year'].value_counts())
     return df
 
 def con_year(row: pd.DataFrame) -> int:
@@ -118,4 +117,3 @@ def calc_accuracy(y_test, y_pred):
       
     print("Report : ", 
     classification_report(y_test, y_pred)) 
-  
