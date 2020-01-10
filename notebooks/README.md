@@ -1,6 +1,3 @@
 # Jupyter Notebooks
 
-This directory will store:
-
-an unpolished exploratory data analysis (EDA) notebook; and
-a polished notebook that states the business problem and summarizes your solution, along with high level takeaways.
+This directory contains a directory `exploratory/` with unpolished exploratory data analysis (EDA) notebooks and a directory `report/` with a polished notebook that states the business problem and summarizes our solution, along with high level takeaways.
