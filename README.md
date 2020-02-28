@@ -2,7 +2,7 @@
 
 This README.md file will serve as a roadmap to this repository. The repository is open and available to the public.
 
-Directories and files to be aware of:
+## Directories and files to be aware of:
 
 1. An “environment.yml” file that contains the packages necessary to run the executables
 
@@ -28,10 +28,10 @@ The data files described above can be found on https://www.drivendata.org/compet
 
 A data dictionary can be found here: https://www.drivendata.org/competitions/7/pump-it-up-data-mining-the-water-table/page/25/
 
-Methodology
+## Methodology
 
   We performed a thorough EDA of the dataset, and built several models to detect if a water well is in need of repair. We tried 5 different classification models, with a Random Forest Classifier as the best performer. This had a higher overall F1 Score, as well as the best recall for the 'Needs Repair' category. Higher recall means fewer False Negatives - we believe that this is the best metric by which to evaluate the performanceof the model; a well needing repairs yet being labeled as “Functional” could have devastating effects to a local community. Conversely, a well erroneously labeled “Needs Repair” would not have nearly as harmful an effect.
 
-Result Metrics
+## Result Metrics
 
   Our random forest classifier model had an 82% accuracy overall, with an F1-Score for the True “Functional” label of 84% and 79% for the True “Needs Repair” label. The metric best for our business case, True “Needs Repair” Recall, performed the worst, unfortunately, at 77%. While this is still a good predictive mode, if given more time we would like to perform more feature engineering to increase this recall score.

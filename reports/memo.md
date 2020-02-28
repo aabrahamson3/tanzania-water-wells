@@ -29,6 +29,8 @@ Thank you for your time and interest in this issue!
 
 ## Citations
 [1] - https://www.wateraid.org/
+
 [2] - https://fundforpeace.org/2019/04/10/fragile-states-index-2019/
+
 [3] - https://www.drivendata.org/competitions/7/pump-it-up-data-mining-the-water-table/data/
 
