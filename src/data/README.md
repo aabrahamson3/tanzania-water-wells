@@ -1,3 +1,3 @@
 # Data
 
-Scripts to download or generate data.
+This directory stores scripts to download or generate data.

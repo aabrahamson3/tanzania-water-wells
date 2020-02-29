@@ -1,4 +1,4 @@
-# tanzania-water-wells
+# Predicting the Functionality of Water Wells
 
 This README.md file will serve as a roadmap to this repository. The repository is open and available to the public.
 
@@ -7,18 +7,18 @@ This README.md file will serve as a roadmap to this repository. The repository i
 1. An “environment.yml” file that contains the packages necessary to run the executables
 
 2. An src/ directory that contains a .py module
-  a. In the root directory of this folder on your local machine, in your terminal please run 'pip install -e .'  to allow the notebooks to access our functions. This will run our 'setup.py' file in the root directory
+  -  In the root directory of this folder on your local machine, in your terminal please run 'pip install -e .'  to allow the notebooks to access our functions. This will run our 'setup.py' file in the root directory
 
 2. A notebooks/ directory that contains three Jupyter notebooks
-  a. A data exploration notebook
-  b. A modeling notebook, containing five models
-  c. A presentation notebook, containing our final report and model 
+  - A data exploration notebook
+  - A modeling notebook, containing five models
+  - A presentation notebook, containing our final report and model 
 
 3. A data/ directory containing three data files
-  a. Due to GitHub upload restrictions, these are included as .gitignore files. They are, in brief:
-    i. Training set target labels
-    ii. Training set features
-    iii. Test set features
+  - Due to GitHub upload restrictions, these are included as .gitignore files. They are, in brief:
+    - Training set target labels
+    - Training set features
+    - Test set features
     
 4. A one-page memo.md written summarizing the models’ results, written for non-technical stakeholders
 

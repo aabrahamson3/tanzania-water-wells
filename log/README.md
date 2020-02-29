@@ -1,3 +1,3 @@
 # Log
 
-This directory will store the log output of the setup.sh file.
+This directory stores the log output of the setup.sh file.
