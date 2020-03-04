@@ -8,47 +8,71 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import plot_confusion_matrix
 from ipyleaflet import Map, basemaps, basemap_to_tiles, CircleMarker, LayerGroup
+import os
 
+def get_raw_csv_file_path(filename):
+    """
+    Function that takes in the name of a CSV and returns the absolute file path
+    to that file name in tanzania-water-wells/data/raw/
+    """
+    # Get the full absolute path to the current functions_used.py file
+    current_file_path = os.path.dirname(__file__)
 
-def model_preprocessing(df, feature_list, ohe, train=True):
-    # print('Beginning numerical cleaning...')
+    # Go up two directories ("pardir" means "parent directory") to the project root
+    project_root = os.path.join(current_file_path, os.pardir, os.pardir)
+
+    # Go down two directories to data/raw
+    raw_data_dir = os.path.join(project_root, 'data', 'raw')
+
+    # Go to the CSV within data/raw
+    csv_path = os.path.join(raw_data_dir, filename)
+
+    # Return the full absolute path
+    return os.path.abspath(csv_path)
+
+def model_preprocessing(X, y, feature_list, ohe, train=True, debug=False):
+
+    # Combine the features and target. This ensures the correct rows are dropped.
+    df = pd.concat([X, y], axis=1)
+
+    if debug: print('Beginning numerical cleaning...')
     df = numerical_clean(df, feature_list)
-    # print('...completed numerical cleaning.\n')
+    if debug: print('...completed numerical cleaning.\n')
     
-    # print('Removing the target from the cleaned data frame...')
+    if debug: print('Removing the target from the cleaned data frame...')
     target = df['status_group']
-    # print("---Length of target: ", len(target))
+    if debug: print("---Length of target: ", len(target))
     df = df.drop(columns='status_group', axis = 1)
-    # print("---Shape of dataframe: ", df.shape)
+    if debug: print("---Shape of dataframe: ", df.shape)
     
-    # print("Reading the remaining columns as independent features\n")
+    if debug: print("Reading the remaining columns as independent features\n")
     obj_list = obj_lister(df)
     
-    # print('Begining "object" cleaning...')
+    if debug: print('Begining "object" cleaning...')
     ohe_df = obj_preprocessing(df, obj_list, ohe, train)
-    # print("---Shape of ohe_df: ", ohe_df.shape)
-    # print('...ending "object" cleaning.')
+    if debug: print("---Shape of ohe_df: ", ohe_df.shape)
+    if debug: print('...ending "object" cleaning.')
     
-    # print("Joining the cleaned numerical and object dataframes together.")
+    if debug: print("Joining the cleaned numerical and object dataframes together.")
     # dropping the independent features from X
     df = df.drop(obj_list, axis=1)
     # joining the OHE dataframe to X
     model_df = df.join(ohe_df)
-    # print('Returning the main (independent features, X) and target (y) data frames...')
+    if debug: print('Returning the main (independent features, X) and target (y) data frames...')
     return model_df, target
 
 
-def numerical_clean(df, feature_list):
+def numerical_clean(df, feature_list, debug=False):
     #this takes the df and the list of numerical features to clean
     df = df[feature_list]
-    # print("check: df shape = ", df.shape)
-    # print('---Dropping 0 longitudes...')
+    if debug: print("check: df shape = ", df.shape)
+    if debug: print('---Dropping 0 longitudes...')
     df = drop_zero_long(df)
-    # print("check: df shape = ", df.shape)
-    # print("---Replace 0's with average constructor year...")
+    if debug: print("check: df shape = ", df.shape)
+    if debug: print("---Replace 0's with average constructor year...")
     df = con_year_avg(df)
-    # print("check: df shape = ", df.shape)
-    # print('...returning a cleaned dataframe of numerical values.\n')
+    if debug: print("check: df shape = ", df.shape)
+    if debug: print('...returning a cleaned dataframe of numerical values.\n')
     return df
 
 def drop_zero_long(df):
@@ -84,21 +108,21 @@ def obj_preprocessing(df, obj_list, ohe, train = True):
     return pd.DataFrame(array_current)
 
 
-def NaN_cleaning(df):
+def NaN_cleaning(df, debug=False):
     # Replace NaN with "unknown" bin
-    # print('---Replacing NaN with "unknown" bin...')
+    if debug: print('---Replacing NaN with "unknown" bin...')
     df = df.replace(np.nan, 'unknown')
-    # print(f'---Check: Number of rows with nulls: {len(df[df.isna().any(axis=1)])}...\n')
+    if debug: print(f'---Check: Number of rows with nulls: {len(df[df.isna().any(axis=1)])}...\n')
     return df.reset_index(drop=True)
 
-def ohe_data(df, ohe, train):
+def ohe_data(df, ohe, train, debug=False):
     #OHE the data
-    # print('Begin one hot encoding data...')
+    if debug: print('Begin one hot encoding data...')
     if train:
         array_current = ohe.fit_transform(df).toarray()
     else:
         array_current = ohe.transform(df).toarray()
-    # print('Finish one hot encoding data...\n')
+    if debug: print('Finish one hot encoding data...\n')
     return array_current
 
 def calc_accuracy(y_test, y_pred): 
