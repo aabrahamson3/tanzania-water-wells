@@ -1,4 +1,3 @@
-# Be sure to train/test split before processing DFs
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -17,30 +16,13 @@ def model_preprocessing(df, feature_list, ohe, train=True):
     1. the target
     2. a joined dataframe with the OHE'd data and a datafram that has been cleaned
     """
-    # print('Beginning numerical cleaning...')
     df = numerical_clean(df, feature_list)
-    # print('...completed numerical cleaning.\n')
-    
-    # print('Removing the target from the cleaned data frame...')
     target = df['status_group']
-    # print("---Length of target: ", len(target))
     df = df.drop(columns='status_group', axis = 1)
-    # print("---Shape of dataframe: ", df.shape)
-    
-    # print("Reading the remaining columns as independent features\n")
     obj_list = obj_lister(df)
-    
-    # print('Begining "object" cleaning...')
     ohe_df = obj_preprocessing(df, obj_list, ohe, train)
-    # print("---Shape of ohe_df: ", ohe_df.shape)
-    # print('...ending "object" cleaning.')
-    
-    # print("Joining the cleaned numerical and object dataframes together.")
-    # dropping the independent features from X
     df = df.drop(obj_list, axis=1)
-    # joining the OHE dataframe to X
     model_df = df.join(ohe_df)
-    # print('Returning the main (independent features, X) and target (y) data frames...')
     return model_df, target
 
 
@@ -48,16 +30,9 @@ def numerical_clean(df, feature_list):
     '''
     This function is part of the cleaning stage. It drops rows with longitude = 0.
     '''
-    #this takes the df and the list of numerical features to clean
     df = df[feature_list]
-    # print("check: df shape = ", df.shape)
-    # print('---Dropping 0 longitudes...')
     df = drop_zero_long(df)
-    # print("check: df shape = ", df.shape)
-    # print("---Replace 0's with average constructor year...")
     df = con_year_avg(df)
-    # print("check: df shape = ", df.shape)
-    # print('...returning a cleaned dataframe of numerical values.\n')
     return df
 
 def drop_zero_long(df):
@@ -98,11 +73,8 @@ def obj_preprocessing(df, obj_list, ohe, train = True):
     2. OHE's data
     """
     df_current = df[obj_list]
-    # Clean the df if there are NaNs
     df = NaN_cleaning(df_current)
-    #OHE data
     array_current = ohe_data(df, ohe, train)
-    #return a dataframe of the OHE data
     return pd.DataFrame(array_current)
 
 
@@ -111,10 +83,7 @@ def NaN_cleaning(df):
     This function thakes in a dataframe and cleans nulls by replacing with text. It returns a
     cleaned dataframe.
     """
-    # Replace NaN with "unknown" bin
-    # print('---Replacing NaN with "unknown" bin...')
     df = df.replace(np.nan, 'unknown')
-    # print(f'---Check: Number of rows with nulls: {len(df[df.isna().any(axis=1)])}...\n')
     return df.reset_index(drop=True)
 
 def ohe_data(df, ohe, train):
@@ -122,12 +91,10 @@ def ohe_data(df, ohe, train):
     This function takes in a dataframe, OHE instance, and training data.
     It OHE's the  categorical data and returns an array.
     """
-    # print('Begin one hot encoding data...')
     if train:
         array_current = ohe.fit_transform(df).toarray()
     else:
         array_current = ohe.transform(df).toarray()
-    # print('Finish one hot encoding data...\n')
     return array_current
 
 def calc_accuracy(y_test, y_pred): 
@@ -159,9 +126,6 @@ def plot_matrix(model, X_test, y_test):
                                 cmap=plt.cm.Blues,
                                 normalize = normalize)
         disp.ax_.set_title(title)
-#     print(title)
-#     print(disp.confusion_matrix)
-    
     plt.show()
 
 def make_map(X_test):
