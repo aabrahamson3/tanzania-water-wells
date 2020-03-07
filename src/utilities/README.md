@@ -1,3 +1,3 @@
 # Utilities
 
-This directory will store any functions produced from this project.
+This directory stores any functions produced in this project.
