@@ -11,6 +11,12 @@ from ipyleaflet import Map, basemaps, basemap_to_tiles, CircleMarker, LayerGroup
 
 
 def model_preprocessing(df, feature_list, ohe, train=True):
+    """
+    This function takes a dataframe, list of desired attributes and an instance of a 
+    one hot encoder and returns:
+    1. the target
+    2. a joined dataframe with the OHE'd data and a datafram that has been cleaned
+    """
     # print('Beginning numerical cleaning...')
     df = numerical_clean(df, feature_list)
     # print('...completed numerical cleaning.\n')
@@ -39,6 +45,9 @@ def model_preprocessing(df, feature_list, ohe, train=True):
 
 
 def numerical_clean(df, feature_list):
+    '''
+    This function is part of the cleaning stage. It drops rows with longitude = 0.
+    '''
     #this takes the df and the list of numerical features to clean
     df = df[feature_list]
     # print("check: df shape = ", df.shape)
@@ -52,9 +61,16 @@ def numerical_clean(df, feature_list):
     return df
 
 def drop_zero_long(df):
+    '''
+    This function is part of the cleaning stage. It drops rows with 0 longitude.
+    '''
     return df.drop(df[df.longitude==0].index)
 
 def con_year_avg(df):
+    """
+    This function takes in a daftaframe and returns a dataframe that
+    has imputed feature (construction year) deremined by the average of construction type
+    """
     con_year_nonzero = df.replace(0, np.nan)
     avg_con_years = pd.DataFrame(con_year_nonzero.groupby(['extraction_type']).mean()['construction_year'])
     df = df.join(avg_con_years, rsuffix = '_avg', on = 'extraction_type')
@@ -65,16 +81,22 @@ def con_year_avg(df):
     return df
 
 def obj_lister(df):
-    # returns a list of columns that contain Objects
+    """
+    This function take in a dataframe and returns a list of columns that contain objects
+    """
     obj_list = []
     for col in df.select_dtypes([np.object]):
         obj_list.append(col)
     return obj_list
 
 def obj_preprocessing(df, obj_list, ohe, train = True):
-    '''
-    
-    '''
+    """
+    This function takes a dataframe, list of columns as objects and an instance of a 
+    one hot encoder and returns a dataframe that has been OHE. It is the driver code for
+    categorical data processing. Steps:
+    1. Clean the df if there are NaNs
+    2. OHE's data
+    """
     df_current = df[obj_list]
     # Clean the df if there are NaNs
     df = NaN_cleaning(df_current)
@@ -85,6 +107,10 @@ def obj_preprocessing(df, obj_list, ohe, train = True):
 
 
 def NaN_cleaning(df):
+    """
+    This function thakes in a dataframe and cleans nulls by replacing with text. It returns a
+    cleaned dataframe.
+    """
     # Replace NaN with "unknown" bin
     # print('---Replacing NaN with "unknown" bin...')
     df = df.replace(np.nan, 'unknown')
@@ -92,7 +118,10 @@ def NaN_cleaning(df):
     return df.reset_index(drop=True)
 
 def ohe_data(df, ohe, train):
-    #OHE the data
+    """
+    This function takes in a dataframe, OHE instance, and training data.
+    It OHE's the  categorical data and returns an array.
+    """
     # print('Begin one hot encoding data...')
     if train:
         array_current = ohe.fit_transform(df).toarray()
@@ -102,7 +131,13 @@ def ohe_data(df, ohe, train):
     return array_current
 
 def calc_accuracy(y_test, y_pred): 
-      
+    """
+    This function takes in test and predition values. It prints:
+    1. a confusion matrix
+    2. the accuracy score
+    3. the classification report
+    It doesn't return any values.
+    """
     print("Confusion Matrix: ", 
     confusion_matrix(y_test, y_pred)) 
     print('\n')
@@ -112,8 +147,10 @@ def calc_accuracy(y_test, y_pred):
     print("Report : ", 
     classification_report(y_test, y_pred)) 
 
-def plot_matrix(model,X_test,y_test):
-    # 
+def plot_matrix(model, X_test, y_test):
+    """
+    This function takes in a model and test values and creates a plot of the confusion matrix.
+    """
     titles_options = [("Confusion matrix, without normalization", None),
                   ("Normalized confusion matrix", 'true')]
     for title, normalize in titles_options:
@@ -128,6 +165,9 @@ def plot_matrix(model,X_test,y_test):
     plt.show()
 
 def make_map(X_test):
+    """
+    This function takes in test vales and returns a map of the locations of test wells
+    """
     m = Map(center=(-6, 35),
             zoom=5, 
             scroll_wheel_zoom=True)
